@@ -1,11 +1,13 @@
-#text_summarizer
-#TEXT SUMMARIZER
-##Name
+# Text Summarizer
+
+## Name
 SAHANA GS
-##Tech Stack
-Python
-vs code
-git
-github
-#Description
+
+## Tech Stack
+- Python
+- VS Code
+- Git
+- GitHub
+
+## Description
 Project under development.
