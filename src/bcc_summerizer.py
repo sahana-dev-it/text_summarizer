@@ -1,40 +1,36 @@
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from collections import defaultdict
+import heapq
 import os
 
-# Read article
-
-category = "tech"
+category = input("Enter category (business, entertainment, politics, sport, tech): ")
 
 folder_path = os.path.join("data", "News Articles", category)
 
-file_name = "001.txt"
+file_name = input("Enter article file name (example: 001.txt): ")
 
 file_path = os.path.join(folder_path, file_name)
 
-with open(file_path, "r", encoding="latin-1") as f:
-    article = f.read()
+try:
+    with open(file_path, "r", encoding="latin-1") as f:
+        article = f.read()
 
-# Tokenization
-
+except FileNotFoundError:
+    print("Error: File not found.")
+    exit()
 sentences = sent_tokenize(article)
 words = word_tokenize(article)
-
-# Stopword removal and word frequency calculation
 
 stop_words = set(stopwords.words("english"))
 
 word_frequencies = defaultdict(int)
 
 for word in words:
-
     word = word.lower()
 
     if word.isalnum() and word not in stop_words:
         word_frequencies[word] += 1
-
-# Sentence scoring
 
 sentence_scores = defaultdict(int)
 
@@ -47,21 +43,18 @@ for sentence in sentences:
         if word in word_frequencies:
             sentence_scores[sentence] += word_frequencies[word]
 
-# Generate summary
+summary_length = max(1, len(sentences) // 3)
 
-average_score = sum(sentence_scores.values()) / len(sentence_scores)
+best_sentences = heapq.nlargest(
+    summary_length,
+    sentence_scores,
+    key=sentence_scores.get
+)
 
-summary = ""
+summary = " ".join(best_sentences)
 
-for sentence in sentences:
-
-    if sentence_scores[sentence] >= average_score:
-        summary += sentence + " "
-
-print("ORIGINAL ARTICLE:\n")
-print(article[:1000])
-
-print("\n" + "=" * 50)
+print("Total Sentences:", len(sentences))
+print("Summary Sentences:", len(best_sentences))
 
 print("\nSUMMARY:\n")
 print(summary)
