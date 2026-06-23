@@ -1,26 +1,40 @@
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from collections import defaultdict
+import os
 
-text = """
-Artificial Intelligence is transforming the world by enabling machines to perform tasks that normally require human intelligence.
-It is used in healthcare, education, finance, transportation and many other industries.
-AI systems can analyze large amounts of data, recognize patterns and make decisions faster than humans.
-As technology advances, AI is expected to play an even greater role in improving efficiency and solving complex problems.
-"""
+# Read article
 
-sentences = sent_tokenize(text)
-words = word_tokenize(text)
+category = "tech"
+
+folder_path = os.path.join("data", "News Articles", category)
+
+file_name = "001.txt"
+
+file_path = os.path.join(folder_path, file_name)
+
+with open(file_path, "r", encoding="latin-1") as f:
+    article = f.read()
+
+# Tokenization
+
+sentences = sent_tokenize(article)
+words = word_tokenize(article)
+
+# Stopword removal and word frequency calculation
 
 stop_words = set(stopwords.words("english"))
 
 word_frequencies = defaultdict(int)
 
 for word in words:
+
     word = word.lower()
 
     if word.isalnum() and word not in stop_words:
         word_frequencies[word] += 1
+
+# Sentence scoring
 
 sentence_scores = defaultdict(int)
 
@@ -33,21 +47,21 @@ for sentence in sentences:
         if word in word_frequencies:
             sentence_scores[sentence] += word_frequencies[word]
 
-print("Sentence Scores:\n")
+# Generate summary
 
-for sentence, score in sentence_scores.items():
-    print("Score:", score)
-    print(sentence)
-    print()
 average_score = sum(sentence_scores.values()) / len(sentence_scores)
 
 summary = ""
 
 for sentence in sentences:
+
     if sentence_scores[sentence] >= average_score:
         summary += sentence + " "
 
-print("\nAverage Score:", round(average_score, 2))
+print("ORIGINAL ARTICLE:\n")
+print(article[:1000])
+
+print("\n" + "=" * 50)
 
 print("\nSUMMARY:\n")
-print(summary)    
+print(summary)
