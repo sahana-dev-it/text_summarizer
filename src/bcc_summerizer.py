@@ -3,8 +3,14 @@ from nltk.corpus import stopwords
 from collections import defaultdict
 import heapq
 import os
-
-category = input("Enter category (business, entertainment, politics, sport, tech): ")
+print("\nAvailable Categories:")
+print("1. business")
+print("2. entertainment")
+print("3. politics")
+print("4. sport")
+print("5. tech")
+print()
+category = input("Enter category : ")
 
 folder_path = os.path.join("data", "News Articles", category)
 
