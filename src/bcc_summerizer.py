@@ -59,8 +59,30 @@ best_sentences = heapq.nlargest(
 
 summary = " ".join(best_sentences)
 
-print("Total Sentences:", len(sentences))
-print("Summary Sentences:", len(best_sentences))
+original_sentences = len(sentences)
+summary_sentences = len(best_sentences)
 
-print("\nSUMMARY:\n")
-print(summary)
+compression = (
+    (original_sentences - summary_sentences)
+    / original_sentences
+) * 100
+
+print("\nSUMMARY STATISTICS")
+print("-------------------")
+print("Original Sentences:", original_sentences)
+print("Summary Sentences:", summary_sentences)
+print("Compression Rate:", round(compression, 2), "%")
+
+os.makedirs("data/summaries", exist_ok=True)
+
+summary_file = os.path.join(
+    "data",
+    "summaries",
+    f"summary_{file_name}"
+)
+
+with open(summary_file, "w", encoding="utf-8") as f:
+    f.write(summary)
+
+print("\nSummary saved to:")
+print(summary_file)
