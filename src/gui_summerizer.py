@@ -42,7 +42,16 @@ def summarize_text():
             if word in word_frequencies:
                 sentence_scores[sentence] += word_frequencies[word]
 
-    summary_length = max(1, len(sentences) // 3)
+    selected_length = summary_option.get()
+
+    if selected_length == "Short":
+        summary_length = max(1, len(sentences) // 8)
+
+    elif selected_length == "Long":
+        summary_length = max(1, len(sentences) // 2)
+
+    else:
+        summary_length = max(1, len(sentences) // 3)
 
     best_sentences = heapq.nlargest(
         summary_length,
@@ -60,8 +69,12 @@ def summarize_text():
         / original_sentences
     ) * 100
 
+    output_text.config(state="normal")
+
     output_text.delete("1.0", tk.END)
     output_text.insert(tk.END, summary)
+
+    output_text.config(state="disabled")
 
     stats_label.config(
         text=
@@ -75,13 +88,13 @@ def clear_text():
 
     input_text.delete("1.0", tk.END)
 
+    output_text.config(state="normal")
     output_text.delete("1.0", tk.END)
+    output_text.config(state="disabled")
 
     stats_label.config(
         text="Statistics will appear here"
     )
-
-
 def save_summary():
 
     summary = output_text.get("1.0", tk.END)
@@ -110,70 +123,112 @@ def save_summary():
 
 root = tk.Tk()
 root.title("Text Summarizer")
-root.geometry("800x600")
+root.geometry("1000x850")
+root.configure(bg="#f0f4f7")
 
 title = tk.Label(
     root,
-    text="TEXT SUMMARIZER",
-    font=("Arial", 16, "bold")
+    text="NLP TEXT SUMMARIZER",
+    font=("Arial", 22, "bold"),
+    bg="#f0f4f7",
+    fg="navy"
 )
 title.pack(pady=10)
 
-input_label = tk.Label(
+input_frame = tk.LabelFrame(
     root,
-    text="Enter Text:"
+    text="Enter Text",
+    padx=10,
+    pady=10,
+    font=("Arial", 11, "bold")
 )
-input_label.pack()
+input_frame.pack(padx=20, pady=10, fill="both")
 
 input_text = tk.Text(
-    root,
-    height=10,
-    width=80
+    input_frame,
+    height=12,
+    width=100,
+    font=("Arial", 10)
 )
-input_text.pack(pady=10)
+input_text.pack()
 
-button_frame = tk.Frame(root)
+length_label = tk.Label(
+    root,
+    text="Select Summary Length:",
+    bg="#f0f4f7",
+    font=("Arial", 11, "bold")
+)
+length_label.pack()
+
+summary_option = tk.StringVar()
+summary_option.set("Medium")
+
+short_radio = tk.Radiobutton(
+    root,
+    text="Short",
+    variable=summary_option,
+    value="Short"
+)
+short_radio.pack()
+
+medium_radio = tk.Radiobutton(
+    root,
+    text="Medium",
+    variable=summary_option,
+    value="Medium"
+)
+medium_radio.pack()
+
+long_radio = tk.Radiobutton(
+    root,
+    text="Long",
+    variable=summary_option,
+    value="Long"
+)
+long_radio.pack()
+
+button_frame = tk.Frame(root, bg="#f0f4f7")
 button_frame.pack(pady=10)
 
 summarize_button = tk.Button(
     button_frame,
     text="Summarize",
-    command=summarize_text
+    command=summarize_text,
+    width=15
 )
 summarize_button.pack(side=tk.LEFT, padx=10)
 
 clear_button = tk.Button(
     button_frame,
     text="Clear",
-    command=clear_text
+    command=clear_text,
+    width=15
 )
 clear_button.pack(side=tk.LEFT, padx=10)
 
 save_button = tk.Button(
     button_frame,
     text="Save Summary",
-    command=save_summary
+    command=save_summary,
+    width=15
 )
 save_button.pack(side=tk.LEFT, padx=10)
 
-output_label = tk.Label(
+output_frame = tk.LabelFrame(
     root,
-    text="Summary:"
+    text="Generated Summary",
+    padx=10,
+    pady=10,
+    font=("Arial", 11, "bold")
 )
-output_label.pack()
+output_frame.pack(padx=20, pady=10, fill="both")
 
 output_text = tk.Text(
-    root,
-    height=10,
-    width=80
-)
-output_text.pack(pady=10)
-
-stats_label = tk.Label(
-    root,
-    text="Statistics will appear here",
+    output_frame,
+    height=12,
+    width=100,
     font=("Arial", 10)
 )
-stats_label.pack(pady=10)
+output_text.pack()
 
 root.mainloop()
